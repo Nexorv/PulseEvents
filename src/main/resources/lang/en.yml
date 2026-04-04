@@ -1,0 +1,5 @@
+prefix: "&6[PulseEvents] "
+
+event-start: "&eEvent started: &b%event%"
+event-end: "&cEvent ended: &b%event%"
+no-events: "&cNo events registered!"
