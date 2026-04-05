@@ -22,6 +22,14 @@ public class EventManager {
         events.add(event);
     }
 
+    public boolean isEventRunning() {
+        return current != null;
+    }
+
+    public PulseEvent getCurrentEvent() {
+        return current;
+    }
+
     public void startRandomEvent() {
         if (events.isEmpty()) {
             Bukkit.broadcastMessage(

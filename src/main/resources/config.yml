@@ -2,6 +2,6 @@ settings:
   language: en
 
 events:
-  min-interval: 180   # sekundy
-  max-interval: 600   # sekundy
+  min-interval: 180   # seconds
+  max-interval: 600   # seconds
   duration: 60

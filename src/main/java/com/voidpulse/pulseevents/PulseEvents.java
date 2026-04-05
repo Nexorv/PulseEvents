@@ -1,7 +1,6 @@
 package com.voidpulse.pulseevents;
 
-import com.voidpulse.pulseevents.events.CoinRainEvent;
-import com.voidpulse.pulseevents.events.LowGravityEvent;
+import com.voidpulse.pulseevents.events.*;
 import com.voidpulse.pulseevents.lang.LanguageManager;
 import com.voidpulse.pulseevents.manager.EventManager;
 import com.voidpulse.pulseevents.task.EventTask;
@@ -29,6 +28,12 @@ public class PulseEvents extends JavaPlugin {
         // rejestracja eventów
         eventManager.registerEvent(new LowGravityEvent(this));
         eventManager.registerEvent(new CoinRainEvent(this));
+        eventManager.registerEvent(new LightningStormEvent(this));
+        eventManager.registerEvent(new TNTRainEvent(this));
+        eventManager.registerEvent(new MobSwarmEvent(this));
+        eventManager.registerEvent(new RandomTeleportEvent(this));
+        eventManager.registerEvent(new FireFeetEvent(this));
+        eventManager.registerEvent(new FreezeEvent(this));
 
         // task (config-based)
         EventTask.start(this, eventManager);

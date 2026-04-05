@@ -23,7 +23,7 @@
         </repository>
     </repositories>
 
-    <dependencies>de>
+    <dependencies>
         <!-- Paper API -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
