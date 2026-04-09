@@ -1,8 +1,14 @@
 name: PulseEvents
-version: 0.0.1
+version: 0.0.2
 main: com.voidpulse.pulseevents.PulseEvents
 api-version: 1.20
 
 commands:
   pulseevents:
     description: Main command
+    alias: pe
+
+permissions:
+  pulseevents.admin:
+    description: Access to admin features
+    default: op
