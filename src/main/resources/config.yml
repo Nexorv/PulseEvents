@@ -5,3 +5,16 @@ events:
   min-interval: 180   # seconds
   max-interval: 600   # seconds
   duration: 60
+
+announcements:
+  times:
+    - 10
+    - 5
+    - 1
+  message: "&eEvent starts in &c%time% &eminutes!"
+
+multiworld:
+  enabled: true
+  allowed-worlds:
+    - world
+    - event_world

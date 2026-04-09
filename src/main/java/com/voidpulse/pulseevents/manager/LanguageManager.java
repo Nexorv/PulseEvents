@@ -1,4 +1,4 @@
-package com.voidpulse.pulseevents.lang;
+package com.voidpulse.pulseevents.manager;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,19 +17,20 @@ public class LanguageManager {
     }
 
     public void load() {
-        String langFile = plugin.getConfig().getString("settings.language", "en");
+        String langName = plugin.getConfig().getString("language", "en");
 
-        File file = new File(plugin.getDataFolder(), "lang/" + langFile + ".yml");
+        File file = new File(plugin.getDataFolder(), "lang/" + langName + ".yml");
 
         if (!file.exists()) {
-            plugin.saveResource("lang/" + langFile + ".yml", false);
+            plugin.saveResource("lang/en.yml", false);
+            file = new File(plugin.getDataFolder(), "lang/en.yml");
         }
 
         lang = YamlConfiguration.loadConfiguration(file);
     }
 
     public String get(String key) {
-        return lang.getString(key, key)
+        return lang.getString(key, "&cMissing: " + key)
                 .replace("&", "§");
     }
 }

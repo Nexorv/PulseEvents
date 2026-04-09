@@ -8,10 +8,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class FreezeEvent implements PulseEvent {
 
-    private final JavaPlugin plugin;
-
     public FreezeEvent(JavaPlugin plugin) {
-        this.plugin = plugin;
     }
 
     @Override

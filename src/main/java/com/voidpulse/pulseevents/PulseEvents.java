@@ -2,14 +2,19 @@ package com.voidpulse.pulseevents;
 
 import com.voidpulse.pulseevents.commands.PECommand;
 import com.voidpulse.pulseevents.events.*;
-import com.voidpulse.pulseevents.lang.LanguageManager;
+import com.voidpulse.pulseevents.manager.LanguageManager;
+import com.voidpulse.pulseevents.manager.AnnouncementManager;
 import com.voidpulse.pulseevents.manager.EventManager;
+import com.voidpulse.pulseevents.manager.LiveUIManager;
 import com.voidpulse.pulseevents.task.EventTask;
+import com.voidpulse.pulseevents.manager.WorldCheck;
 import com.voidpulse.pulseevents.update.UpdateChecker;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import com.voidpulse.pulseevents.manager.*;
+import com.voidpulse.pulseevents.listener.MilkBlockListener;
 
 public class PulseEvents extends JavaPlugin {
 
@@ -17,6 +22,9 @@ public class PulseEvents extends JavaPlugin {
     private EventManager eventManager;
     private LanguageManager lang;
     private UpdateChecker updateChecker;
+    private AnnouncementManager announcementManager;
+    private LiveUIManager liveUIManager;
+    private WorldCheck worldCheck;
 
     @Override
     public void onEnable() {
@@ -29,7 +37,7 @@ public class PulseEvents extends JavaPlugin {
         lang = new LanguageManager(this);
 
         // event system
-        eventManager = new EventManager(this);
+        eventManager = new EventManager();
 
         // Komendy
         getCommand("pe").setExecutor(new PECommand(updateChecker));
@@ -56,6 +64,17 @@ public class PulseEvents extends JavaPlugin {
 
 
         updateChecker.check();
+        worldCheck = new WorldCheck(this);
+
+        announcementManager = new AnnouncementManager(this);
+        announcementManager.startAnnouncements();
+
+
+        liveUIManager = new LiveUIManager();
+        getServer().getPluginManager().registerEvents(
+                new MilkBlockListener(eventManager, worldCheck, lang),
+                this
+        );
 
 
         getLogger().info("PulseEvents enabled!");
@@ -79,5 +98,9 @@ public class PulseEvents extends JavaPlugin {
 
     public LanguageManager getLang() {
         return lang;
+    }
+
+    public WorldCheck getWorldCheck() {
+        return worldCheck;
     }
 }
