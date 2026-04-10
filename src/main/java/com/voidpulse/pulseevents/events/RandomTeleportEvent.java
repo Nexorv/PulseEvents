@@ -27,8 +27,8 @@ public class RandomTeleportEvent implements PulseEvent {
 
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
-                int x = (int) (Math.random() * 200 - 100);
-                int z = (int) (Math.random() * 200 - 100);
+                int x = (int) (Math.random() * 600 - 300);
+                int z = (int) (Math.random() * 600 - 300);
                 int y = w.getHighestBlockYAt(x, z);
 
                 p.teleport(new Location(w, x, y, z));

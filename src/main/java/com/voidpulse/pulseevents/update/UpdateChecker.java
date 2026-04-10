@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 
+@SuppressWarnings("deprecation")
 public class UpdateChecker {
 
     private final JavaPlugin plugin;

@@ -6,10 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class FreezeEvent implements PulseEvent {
-
-    public FreezeEvent(JavaPlugin plugin) {
-    }
+public record FreezeEvent(JavaPlugin plugin) implements PulseEvent {
 
     @Override
     public String getName() {

@@ -4,14 +4,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
+@SuppressWarnings("ALL")
 public class TargetPlayerEvent implements PulseEvent {
 
-    private final JavaPlugin plugin;
     private Player target;
+    private final JavaPlugin plugin;
 
     public TargetPlayerEvent(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -25,8 +25,14 @@ public class TargetPlayerEvent implements PulseEvent {
     @Override
     public void start() {
 
-        List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
-        target = players.get(new Random().nextInt(players.size()));
+        List<Player> players = List.copyOf(Bukkit.getOnlinePlayers());
+
+        if (players.isEmpty()) {
+            Bukkit.broadcastMessage("§cNo players to target!");
+            return;
+        }
+
+        target = players.get(ThreadLocalRandom.current().nextInt(players.size()));
 
         Bukkit.broadcastMessage("§cTARGET: §e" + target.getName());
     }

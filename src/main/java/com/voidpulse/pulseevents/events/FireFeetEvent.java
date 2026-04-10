@@ -2,6 +2,7 @@ package com.voidpulse.pulseevents.events;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -27,7 +28,14 @@ public class FireFeetEvent implements PulseEvent {
 
             for (Player p : Bukkit.getOnlinePlayers()) {
 
-                if (!p.isOnGround()) continue;
+                if (!p.isOnline()) continue;
+
+                Block blockBelow = p.getLocation()
+                        .clone()
+                        .subtract(0, 1, 0)
+                        .getBlock();
+
+                if (!blockBelow.getType().isSolid()) continue;
 
                 p.getWorld().spawnParticle(
                         Particle.FLAME,
@@ -43,7 +51,10 @@ public class FireFeetEvent implements PulseEvent {
 
     @Override
     public void stop() {
-        if (task != null) task.cancel();
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
     }
 
     @Override

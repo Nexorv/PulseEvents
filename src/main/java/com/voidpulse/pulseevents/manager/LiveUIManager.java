@@ -7,8 +7,11 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
+@SuppressWarnings("deprecation")
 public class LiveUIManager {
 
+    public LiveUIManager() {
+    }
     private BossBar bossBar;
 
     // =========================
@@ -27,37 +30,6 @@ public class LiveUIManager {
         }
 
         bossBar.setVisible(true);
-    }
-
-    // =========================
-    // TITLE (TO CI BRAKOWAŁO)
-    // =========================
-    public void sendStartTitle(String eventName) {
-
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            p.sendTitle(
-                    ChatColor.GOLD + eventName,
-                    ChatColor.YELLOW + "Event started!",
-                    10,
-                    40,
-                    10
-            );
-        }
-    }
-
-    // =========================
-    // ACTIONBAR
-    // =========================
-    public void sendActionBar(int players) {
-
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            p.spigot().sendMessage(
-                    net.md_5.bungee.api.ChatMessageType.ACTION_BAR,
-                    new net.md_5.bungee.api.chat.TextComponent(
-                            "Players in event: " + players
-                    )
-            );
-        }
     }
 
     // =========================
