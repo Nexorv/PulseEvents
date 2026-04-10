@@ -1,12 +1,13 @@
 name: PulseEvents
-version: 0.0.2
+version: 0.0.3
 main: com.voidpulse.pulseevents.PulseEvents
 api-version: 1.20
 
 commands:
-  pulseevents:
+  pe:
     description: Main command
-    alias: pe
+    usage: /pe
+    permission: pulseevents.admin
 
 permissions:
   pulseevents.admin:

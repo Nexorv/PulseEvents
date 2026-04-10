@@ -39,6 +39,8 @@ public class PulseEvents extends JavaPlugin {
         // event system
         eventManager = new EventManager();
 
+        updateChecker = new UpdateChecker(this, "Ryvox0/PulseEvents");
+
         // Komendy
         getCommand("pe").setExecutor(new PECommand(updateChecker));
 
@@ -59,8 +61,6 @@ public class PulseEvents extends JavaPlugin {
 
         // task (config-based)
         EventTask.start(this, eventManager);
-
-        updateChecker = new UpdateChecker(this, "Ryvox0/PulseEvents");
 
 
         updateChecker.check();
