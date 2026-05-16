@@ -22,6 +22,7 @@ import com.voidpulse.pulseevents.manager.LanguageManager;
 import com.voidpulse.pulseevents.manager.LiveUIManager;
 import com.voidpulse.pulseevents.manager.AnnouncementManager;
 import com.voidpulse.pulseevents.manager.CooldownManager;
+import com.voidpulse.pulseevents.manager.CustomEventManager;
 import com.voidpulse.pulseevents.manager.WorldCheck;
 import com.voidpulse.pulseevents.placeholder.PulseEventsPlaceholderExpansion;
 import com.voidpulse.pulseevents.update.UpdateChecker;
@@ -40,6 +41,7 @@ public final class PulseEvents extends JavaPlugin {
     private UpdateChecker updateChecker;
     private EconomyManager economyManager;
     private CooldownManager cooldownManager;
+    private CustomEventManager customEventManager;
     private EventsGuiListener eventsGuiListener;
     private PulseEventsPlaceholderExpansion placeholderExpansion;
 
@@ -84,6 +86,7 @@ public final class PulseEvents extends JavaPlugin {
         worldCheck = new WorldCheck(this);
         updateChecker = new UpdateChecker(this, lang, "Ryvox0/PulseEvents");
         economyManager = new EconomyManager(this);
+        customEventManager = new CustomEventManager(this, lang, economyManager, worldCheck);
     }
 
     private void registerEvents() {
@@ -113,6 +116,8 @@ public final class PulseEvents extends JavaPlugin {
     }
 
     private void registerGameEvents() {
+        eventManager.clearRegisteredEvents();
+
         if (economyManager.isAvailable()) {
             eventManager.registerEvent(new CoinRainEvent(this));
         } else {
@@ -129,6 +134,10 @@ public final class PulseEvents extends JavaPlugin {
         eventManager.registerEvent(new RandomEffectsEvent(this));
         eventManager.registerEvent(new TargetPlayerEvent(this));
         eventManager.registerEvent(new SpinEvent(this));
+
+        for (var customEvent : customEventManager.loadCustomEvents()) {
+            eventManager.registerEvent(customEvent);
+        }
     }
 
     private void startSystems() {
@@ -157,6 +166,7 @@ public final class PulseEvents extends JavaPlugin {
         lang.load();
         cooldownManager.reload();
         eventManager.reloadState();
+        registerGameEvents();
 
         if (announcementManager != null) {
             announcementManager.refreshSchedules();

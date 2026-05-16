@@ -1,53 +1,53 @@
 # Changelog
 
-## Unreleased
+## 1.0.0 - 2026-05-03
 
 ### Added
 
-- PlaceholderAPI soft dependency in plugin metadata and Maven.
-- Optional `pulseevents` PlaceholderAPI expansion. The plugin still loads normally without PlaceholderAPI installed.
-- New placeholders:
-  - `%pulseevents_current_event%`
-  - `%pulseevents_event_active%`
-  - `%pulseevents_events_enabled%`
-  - `%pulseevents_queue_size%`
-  - `%pulseevents_registered_events%`
-- Event chance editor GUI opened with `/pe events` for players.
-- Faster queue management from the event GUI with instant event queueing.
-- New GUI translation entries in both `lang/en.yml` and `lang/pl.yml` for:
-  - menu title
-  - event item name
-  - current chance display
-  - left/right click controls
-  - shift click controls
-  - update feedback message
-- Per-event `chance` config entries in `config.yml` for all registered events.
+- Data-driven custom event system under `custom-events` in `config.yml`.
+- Configurable event metadata: `name`, `chance`, `duration`, `icon`, `min-players`, `allowed-worlds`, `start-message`, `end-message`, and `bossbar-title`.
+- Configurable action pipeline with delayed, repeating, targeted, and chance-gated actions.
+- Supported custom action types:
+  - `message`
+  - `sound`
+  - `potion`
+  - `teleport`
+  - `spawn-mob`
+  - `strike-lightning`
+  - `spawn-tnt`
+  - `velocity`
+  - `ignite`
+  - `economy-reward`
+  - `title`
+  - `console-command`
+  - `player-command`
+- New action fields for custom events:
+  - `target-count`
+  - `chance`
+  - `fade-in-ticks`
+  - `stay-ticks`
+  - `fade-out-ticks`
+  - `command`
+- Five preset v1.0 custom events:
+  - `meteor-shower`
+  - `gravity-well`
+  - `hot-potato`
+  - `jackpot-rush`
+  - `blink-surge`
+- Validation for custom events during plugin startup and reload.
+- Full custom event reference in `CUSTOM_EVENTS.md`.
+- Extra GUI event details for configured events:
+  - duration
+  - minimum players
 
 ### Changed
 
-- `/pe events` now opens the event chance menu for players instead of only printing the event list.
-- Event chances can now be adjusted directly in-game:
-  - left click: `+5`
-  - right click: `-5`
-  - shift + left click: `+20`
-  - shift + right click: `-20`
-- Events can now be added to the queue directly from the GUI with middle click.
-- The GUI now shows queued copies per event and a queue summary item.
-- Black Hole event now renders particle effects around the pull center for better visibility.
-- Fire Feet now places fire behind the player based on movement direction instead of only around the feet.
+- Event registration now reloads built-in and custom events together.
+- Event menu icons are resolved through the event contract so built-in and custom events share the same UI flow.
+- Queue, random selection, announcements, bossbar, placeholders, and GUI chance editing now work with custom events as first-class entries.
+- GUI queue input now supports middle click, `Q`, and `Ctrl+Q` for adding events to the queue.
+- Shipped config presets now demonstrate titles, command actions, per-action chance, custom start/end messages, custom bossbar text, and multi-target random selection.
 
-### Config and Language
+### Version
 
-- `config.yml` now includes chance values for:
-  - `coin-rain`
-  - `lightning-storm`
-  - `tnt-rain`
-  - `mob-swarm`
-  - `random-teleport`
-  - `fire-feet`
-  - `freeze`
-  - `black-hole`
-  - `random-effects`
-  - `target-player`
-  - `spin`
-- `lang/en.yml` and `lang/pl.yml` now include the strings required for the event GUI and chance update feedback.
+- Plugin version bumped from `0.0.4` to `1.0.0`.

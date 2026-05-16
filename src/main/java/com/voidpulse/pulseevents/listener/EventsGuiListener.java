@@ -1,6 +1,7 @@
 package com.voidpulse.pulseevents.listener;
 
 import com.voidpulse.pulseevents.PulseEvents;
+import com.voidpulse.pulseevents.events.ConfiguredPulseEvent;
 import com.voidpulse.pulseevents.events.PulseEvent;
 import com.voidpulse.pulseevents.manager.EventManager;
 import com.voidpulse.pulseevents.manager.LanguageManager;
@@ -70,7 +71,7 @@ public class EventsGuiListener implements Listener {
 
         PulseEvent pulseEvent = events.get(slot);
 
-        if (event.getClick() == ClickType.MIDDLE) {
+        if (isQueueClick(event.getClick())) {
             handleQueueAdd(player, pulseEvent);
             player.openInventory(createInventory());
             return;
@@ -111,7 +112,7 @@ public class EventsGuiListener implements Listener {
     }
 
     private ItemStack createEventItem(PulseEvent pulseEvent) {
-        ItemStack item = new ItemStack(resolveMaterial(pulseEvent));
+        ItemStack item = new ItemStack(pulseEvent.getMenuMaterial());
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
             return item;
@@ -139,6 +140,10 @@ public class EventsGuiListener implements Listener {
                 "%amount%",
                 String.valueOf(countQueuedCopies(pulseEvent))
         ));
+        if (pulseEvent instanceof ConfiguredPulseEvent configuredPulseEvent) {
+            lore.add(lang.get("gui.events.item-duration", "%seconds%", String.valueOf(configuredPulseEvent.getDuration())));
+            lore.add(lang.get("gui.events.item-min-players", "%amount%", String.valueOf(configuredPulseEvent.getMinPlayers())));
+        }
         meta.setLore(lore);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(meta);
@@ -166,23 +171,6 @@ public class EventsGuiListener implements Listener {
         return item;
     }
 
-    private Material resolveMaterial(PulseEvent pulseEvent) {
-        return switch (eventManager.getConfigKey(pulseEvent)) {
-            case "coin-rain" -> Material.SUNFLOWER;
-            case "lightning-storm" -> Material.LIGHTNING_ROD;
-            case "tnt-rain" -> Material.TNT;
-            case "mob-swarm" -> Material.ZOMBIE_HEAD;
-            case "random-teleport" -> Material.ENDER_PEARL;
-            case "fire-feet" -> Material.FLINT_AND_STEEL;
-            case "freeze" -> Material.ICE;
-            case "black-hole" -> Material.OBSIDIAN;
-            case "random-effects" -> Material.POTION;
-            case "target-player" -> Material.CROSSBOW;
-            case "spin" -> Material.COMPASS;
-            default -> Material.NETHER_STAR;
-        };
-    }
-
     private List<PulseEvent> getSortedEvents() {
         List<PulseEvent> events = eventManager.getRegisteredEvents();
         events.sort(Comparator.comparing(eventManager::getDisplayName));
@@ -201,6 +189,12 @@ public class EventsGuiListener implements Listener {
             case SHIFT_RIGHT -> -20;
             default -> 0;
         };
+    }
+
+    private boolean isQueueClick(ClickType clickType) {
+        return clickType == ClickType.MIDDLE
+                || clickType == ClickType.DROP
+                || clickType == ClickType.CONTROL_DROP;
     }
 
     private void handleQueueAdd(Player player, PulseEvent pulseEvent) {

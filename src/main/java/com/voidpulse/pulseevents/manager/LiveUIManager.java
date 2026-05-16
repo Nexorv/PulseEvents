@@ -24,6 +24,10 @@ public class LiveUIManager {
     }
 
     public void start(String eventName, int durationSeconds) {
+        start(eventName, durationSeconds, null);
+    }
+
+    public void start(String eventName, int durationSeconds, String customTitle) {
         if (!plugin.getConfig().getBoolean("bossbar.enabled", true)) {
             return;
         }
@@ -31,7 +35,9 @@ public class LiveUIManager {
         stop();
 
         bossBar = Bukkit.createBossBar(
-                lang.get("bossbar.title", "%event%", eventName),
+                customTitle == null || customTitle.isBlank()
+                        ? lang.get("bossbar.title", "%event%", eventName)
+                        : lang.format(customTitle, "%event%", eventName),
                 getBarColor(),
                 getBarStyle()
         );

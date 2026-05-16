@@ -67,6 +67,10 @@ public class LanguageManager {
         return colorize(applyPlaceholders(prefix + message, replacements));
     }
 
+    public String format(String input, String... replacements) {
+        return colorize(applyPlaceholders(input == null ? "" : input, replacements));
+    }
+
     private String getRaw(String key, String defaultValue) {
         return lang.getString(key, defaultValue);
     }

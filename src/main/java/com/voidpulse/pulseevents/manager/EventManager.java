@@ -1,6 +1,7 @@
 package com.voidpulse.pulseevents.manager;
 
 import com.voidpulse.pulseevents.events.PulseEvent;
+import com.voidpulse.pulseevents.events.ConfiguredPulseEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -39,7 +40,13 @@ public class EventManager {
 
     public void registerEvent(PulseEvent event) {
         events.add(event);
-        eventsByKey.put(normalizeEventKey(event.getName()), event);
+        eventsByKey.put(normalizeEventKey(event.getKey()), event);
+    }
+
+    public void clearRegisteredEvents() {
+        events.clear();
+        eventsByKey.clear();
+        eventQueue.removeIf(eventKey -> !eventsByKey.containsKey(eventKey));
     }
 
     public void setAnnouncementManager(AnnouncementManager announcementManager) {
@@ -119,7 +126,7 @@ public class EventManager {
             return false;
         }
 
-        eventQueue.offer(normalizeEventKey(event.getName()));
+        eventQueue.offer(normalizeEventKey(event.getKey()));
 
         if (announcementManager != null) {
             announcementManager.onQueueUpdated();
@@ -222,7 +229,17 @@ public class EventManager {
         liveUIManager.stop();
         current = null;
 
-        Bukkit.broadcastMessage(lang.getWithPrefix("event.end", "%event%", eventName));
+        if (eventToStop instanceof ConfiguredPulseEvent configuredPulseEvent
+                && configuredPulseEvent.getEndMessage() != null
+                && !configuredPulseEvent.getEndMessage().isBlank()) {
+            Bukkit.broadcastMessage(lang.format(
+                    configuredPulseEvent.getEndMessage(),
+                    "%event%",
+                    eventName
+            ));
+        } else {
+            Bukkit.broadcastMessage(lang.getWithPrefix("event.end", "%event%", eventName));
+        }
 
         if (announcementManager != null) {
             announcementManager.onEventStopped();
@@ -265,15 +282,15 @@ public class EventManager {
                 ? className.substring(0, className.length() - "Event".length())
                 : className;
 
-        return baseName.replaceAll("([a-z])([A-Z])", "$1-$2").toLowerCase(Locale.ROOT);
+        return event.getKey();
     }
 
     public int getEventChance(PulseEvent event) {
-        return Math.max(0, plugin.getConfig().getInt("events." + getConfigKey(event) + ".chance", 100));
+        return Math.max(0, plugin.getConfig().getInt(event.getChanceConfigPath(), 100));
     }
 
     public void setEventChance(PulseEvent event, int chance) {
-        plugin.getConfig().set("events." + getConfigKey(event) + ".chance", Math.max(0, chance));
+        plugin.getConfig().set(event.getChanceConfigPath(), Math.max(0, chance));
         plugin.saveConfig();
 
         if (announcementManager != null) {
@@ -286,22 +303,23 @@ public class EventManager {
     }
 
     public String getDisplayName(PulseEvent event) {
-        String className = event.getClass().getSimpleName();
-        String baseName = className.endsWith("Event")
-                ? className.substring(0, className.length() - "Event".length())
-                : className;
-
         String translationKey = "events." + getConfigKey(event) + ".name";
-
-        return lang.getOrDefault(translationKey, toTitleCase(baseName));
-    }
-
-    private String toTitleCase(String text) {
-        return text.replaceAll("([a-z])([A-Z])", "$1 $2");
+        return lang.getOrDefault(translationKey, event.getName());
     }
 
     private boolean startEvent(PulseEvent event) {
         if (!eventsSystemEnabled || event == null || current != null) {
+            return false;
+        }
+
+        if (event instanceof ConfiguredPulseEvent configuredPulseEvent
+                && configuredPulseEvent.getEligiblePlayerCount() < configuredPulseEvent.getMinPlayers()) {
+            plugin.getLogger().warning(
+                    "Skipping custom event '" + configuredPulseEvent.getKey()
+                            + "' because it requires at least "
+                            + configuredPulseEvent.getMinPlayers()
+                            + " eligible player(s)."
+            );
             return false;
         }
 
@@ -322,8 +340,22 @@ public class EventManager {
         }
 
         String eventName = getDisplayName(event);
-        Bukkit.broadcastMessage(lang.getWithPrefix("event.start", "%event%", eventName));
-        liveUIManager.start(eventName, Math.max(0, current.getDuration()));
+        if (event instanceof ConfiguredPulseEvent configuredPulseEvent) {
+            if (configuredPulseEvent.getStartMessage() != null && !configuredPulseEvent.getStartMessage().isBlank()) {
+                Bukkit.broadcastMessage(lang.format(
+                        configuredPulseEvent.getStartMessage(),
+                        "%event%",
+                        eventName
+                ));
+            } else {
+                Bukkit.broadcastMessage(lang.getWithPrefix("event.start", "%event%", eventName));
+            }
+
+            liveUIManager.start(eventName, Math.max(0, current.getDuration()), configuredPulseEvent.getBossBarTitle());
+        } else {
+            Bukkit.broadcastMessage(lang.getWithPrefix("event.start", "%event%", eventName));
+            liveUIManager.start(eventName, Math.max(0, current.getDuration()));
+        }
 
         if (announcementManager != null) {
             announcementManager.onEventStarted();
